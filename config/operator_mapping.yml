@@ -1,0 +1,65 @@
+operators:
+  - canonical_name: WINDTRE
+    group_name: WINDTRE_GROUP
+    type: MNO
+    aliases: ["WINDTRE", "WIND TRE", "W3"]
+  - canonical_name: VERY MOBILE
+    group_name: WINDTRE_GROUP
+    type: SUBBRAND
+    aliases: ["VERY MOBILE", "VERY"]
+  - canonical_name: TIM
+    group_name: TIM_GROUP
+    type: MNO
+    aliases: ["TIM", "TELECOM ITALIA"]
+  - canonical_name: KENA
+    group_name: TIM_GROUP
+    type: SUBBRAND
+    aliases: ["KENA"]
+  - canonical_name: VODAFONE
+    group_name: VODAFONE_GROUP
+    type: MNO
+    aliases: ["VODAFONE", "VOD"]
+  - canonical_name: HO.MOBILE
+    group_name: VODAFONE_GROUP
+    type: SUBBRAND
+    aliases: ["HO.MOBILE", "HO MOBILE", "HO"]
+  - canonical_name: ILIAD
+    group_name: ILIAD_GROUP
+    type: MNO
+    aliases: ["ILIAD"]
+  - canonical_name: FASTWEB
+    group_name: FASTWEB_GROUP
+    type: MVNO
+    aliases: ["FASTWEB"]
+  - canonical_name: POSTE MOBILE
+    group_name: POSTE_GROUP
+    type: MVNO
+    aliases: ["POSTE MOBILE", "POSTE"]
+  - canonical_name: COOP VOCE
+    group_name: COOP_GROUP
+    type: MVNO
+    aliases: ["COOP VOCE", "COOP"]
+  - canonical_name: LYCA MOBILE
+    group_name: LYCA_GROUP
+    type: MVNO
+    aliases: ["LYCA MOBILE", "LYCA"]
+  - canonical_name: DIGI MOBIL
+    group_name: DIGI_GROUP
+    type: MVNO
+    aliases: ["DIGI MOBIL", "DIGI"]
+  - canonical_name: TISCALI
+    group_name: TISCALI_GROUP
+    type: MVNO
+    aliases: ["TISCALI"]
+  - canonical_name: 1 MOBILE
+    group_name: ONE_MOBILE_GROUP
+    type: MVNO
+    aliases: ["1 MOBILE", "1MOBILE"]
+  - canonical_name: OTHER MVNO
+    group_name: AGGREGATE
+    type: AGGREGATE
+    aliases: ["OTHER MVNO", "OTHERS", "Other MVNO"]
+  - canonical_name: WINDTRE+VERY MOBILE
+    group_name: WINDTRE_GROUP
+    type: COMBINED
+    aliases: ["WINDTRE+VERY MOBILE", "WINDTRE+VERY"]
