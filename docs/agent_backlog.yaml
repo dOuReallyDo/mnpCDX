@@ -1,0 +1,32 @@
+program: mnpCDX MVP delivery
+coordinator: Main Architect
+milestones:
+  - version: v0.1.0
+    objective: Foundation ingestion and schema
+    tasks:
+      - owner: Ingestion Engineer
+        item: Build idempotent upload pipeline
+      - owner: Parsing Specialist
+        item: Stabilize monthly/daily parser and add regression checks
+      - owner: Data Model Engineer
+        item: Define DuckDB schema and analytical view
+  - version: v0.2.0
+    objective: Analytics and API
+    tasks:
+      - owner: Analytics Engineer
+        item: Implement KPI and quality report services
+      - owner: API Engineer
+        item: Expose REST endpoints and OpenAPI
+      - owner: QA Lead
+        item: Build integration tests for ingest->kpi flow
+  - version: v0.3.0-mvp
+    objective: Business-ready MVP
+    tasks:
+      - owner: Dashboard Engineer
+        item: Build operator dashboard with trends and top flows
+      - owner: AI Orchestrator Engineer
+        item: Add safe AI executive summary fallback-first
+      - owner: Security Engineer
+        item: Apply secret-handling baseline and checks
+      - owner: DevOps/SRE Engineer
+        item: Prepare release workflow and runbook
