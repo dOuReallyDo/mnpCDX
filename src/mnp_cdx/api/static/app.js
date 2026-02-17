@@ -24,13 +24,25 @@ function pretty(obj) {
   return JSON.stringify(obj, null, 2);
 }
 
+function extractErrorMessage(payload) {
+  if (typeof payload === "string") return payload;
+  if (!payload || typeof payload !== "object") return "Errore API";
+  if (typeof payload.detail === "string") return payload.detail;
+  if (payload.detail && typeof payload.detail === "object") {
+    if (typeof payload.detail.message === "string") return payload.detail.message;
+    return pretty(payload.detail);
+  }
+  if (typeof payload.message === "string") return payload.message;
+  return pretty(payload);
+}
+
 async function fetchJson(url, options = {}) {
   const response = await fetch(url, options);
   const contentType = response.headers.get("content-type") || "";
   const isJson = contentType.includes("application/json");
   const payload = isJson ? await response.json() : await response.text();
   if (!response.ok) {
-    throw new Error(isJson ? pretty(payload) : payload);
+    throw new Error(isJson ? extractErrorMessage(payload) : payload);
   }
   return payload;
 }

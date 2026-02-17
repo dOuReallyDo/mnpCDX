@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from datetime import date
+import logging
 from pathlib import Path
 import tempfile
+import uuid
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import HTMLResponse
@@ -20,6 +22,18 @@ from mnp_cdx.ingest.parser import MNPParser
 from mnp_cdx.ingest.service import IngestionService
 
 
+logger = logging.getLogger(__name__)
+
+
+def _raise_internal_error(operation: str, exc: Exception) -> None:
+    error_id = uuid.uuid4().hex[:8]
+    logger.exception("Unexpected API failure on %s [error_id=%s]", operation, error_id)
+    raise HTTPException(
+        status_code=500,
+        detail=f"{operation} fallita per errore interno (ref: {error_id})",
+    ) from exc
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     cfg = settings or Settings.load()
 
@@ -32,7 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     analytics = AnalyticsService(repo)
     generic = GenericTemplateEngine(repo)
 
-    app = FastAPI(title="mnpCDX API", version="0.4.0")
+    app = FastAPI(title="mnpCDX API", version="0.4.2")
 
     static_dir = Path(__file__).parent / "static"
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
@@ -150,6 +164,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             }
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except Exception as exc:  # pragma: no cover - defensive runtime guard
+            _raise_internal_error("Analisi template", exc)
         finally:
             tmp_path.unlink(missing_ok=True)
 
@@ -178,6 +194,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             return result.__dict__
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except Exception as exc:  # pragma: no cover - defensive runtime guard
+            _raise_internal_error("Ingestion template", exc)
         finally:
             tmp_path.unlink(missing_ok=True)
 

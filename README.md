@@ -3,7 +3,7 @@
 mnpCDX e una piattaforma production-oriented con interfaccia web moderna per ingestion e analisi trend di file Excel anche eterogenei.
 
 ## Stato
-- Versione target corrente: `v0.3.0-mvp`
+- Versione target corrente: `v0.4.2`
 - Scope: weekly batch ingestion, KPI operator-focused, report markdown, API REST e dashboard operativa.
 
 ## Componenti principali
@@ -21,6 +21,7 @@ cd mnpCDX
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .
+# per tool dev su zsh: pip install -e '.[dev]'
 
 # Inizializza DB
 mnp-cdx init-db
@@ -69,6 +70,7 @@ mnp-cdx dashboard
 - `v0.1.0`: foundation ingest + schema + parser.
 - `v0.2.0`: analytics + API + reporting.
 - `v0.3.0-mvp`: dashboard + AI summary opzionale + quality gate report.
+- `v0.4.x`: web studio template-aware + hardening error handling API/UI.
 
 Dettagli in `docs/release_notes.md`.
 

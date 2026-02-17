@@ -1,5 +1,10 @@
 # Release Notes mnpCDX
 
+## v0.4.2 - API Error Hardening
+- Hardening endpoint `/template/analyze` e `/template/ingest` con gestione eccezioni inattese e reference id.
+- Migliorato parser errori nella Web UI (`static/app.js`) per messaggi utente leggibili.
+- Aggiunti test API su percorsi 500 strutturati in `tests/test_api_error_handling.py`.
+
 ## v0.4.1 - Portfolio Governance Token-Minimal
 - Definito modello operativo token-minimal in `docs/token_minimal_operating_model.md`.
 - Definito piano di distribuzione team e sequenza portfolio in `docs/portfolio_team_distribution_plan.md`.
