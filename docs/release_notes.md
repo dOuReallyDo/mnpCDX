@@ -1,5 +1,10 @@
 # Release Notes mnpCDX
 
+## v0.4.1 - Portfolio Governance Token-Minimal
+- Definito modello operativo token-minimal in `docs/token_minimal_operating_model.md`.
+- Definito piano di distribuzione team e sequenza portfolio in `docs/portfolio_team_distribution_plan.md`.
+- Formalizzato ruolo obbligatorio `Context Steward` per coerenza e memoria critica.
+
 ## v0.4.0 - Web Studio + Template Engine
 - Nuova Web UI moderna su `GET /` per operare senza CLI.
 - Motore template-aware per Excel eterogenei:

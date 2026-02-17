@@ -71,3 +71,7 @@ mnp-cdx dashboard
 - `v0.3.0-mvp`: dashboard + AI summary opzionale + quality gate report.
 
 Dettagli in `docs/release_notes.md`.
+
+## Governance operativa portfolio
+- Modello token/context minimal: `docs/token_minimal_operating_model.md`
+- Distribuzione team e sequenza progetto-per-progetto: `docs/portfolio_team_distribution_plan.md`
