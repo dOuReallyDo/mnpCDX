@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mnpCDX Web Studio</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape bg-shape-a"></div>
+    <div class="bg-shape bg-shape-b"></div>
+
+    <header class="topbar">
+      <div>
+        <h1>mnpCDX Web Studio</h1>
+        <p>Template-aware ingestion e trend intelligence per Excel eterogenei</p>
+      </div>
+      <span id="healthBadge" class="badge">API: checking...</span>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab is-active" data-tab="analyze">Analizza Struttura</button>
+      <button class="tab" data-tab="ingest">Ingestion</button>
+      <button class="tab" data-tab="templates">Templates</button>
+      <button class="tab" data-tab="trends">Trend Explorer</button>
+    </nav>
+
+    <main>
+      <section id="panel-analyze" class="panel is-active">
+        <div class="card">
+          <h2>Analisi automatica workbook</h2>
+          <p>Carica un file Excel. Il sistema rileva struttura sheet/header/colonne, genera firma e cerca template compatibile.</p>
+          <form id="analyzeForm">
+            <input type="file" id="analyzeFile" accept=".xlsx,.xlsm,.xls" required />
+            <button type="submit">Analizza</button>
+          </form>
+          <pre id="analyzeResult" class="result"></pre>
+        </div>
+      </section>
+
+      <section id="panel-ingest" class="panel">
+        <div class="card">
+          <h2>Ingestion template-driven</h2>
+          <p>Il sistema riusa template esistenti o ne crea di nuovi/versionati e fa append ottimizzato nel DB locale.</p>
+          <form id="ingestForm">
+            <input type="file" id="ingestFile" accept=".xlsx,.xlsm,.xls" required />
+            <div class="grid2">
+              <input type="text" id="ingestTemplateName" placeholder="Nome template (opzionale)" />
+              <input type="number" id="ingestTemplateId" placeholder="Template ID (opzionale)" min="1" />
+            </div>
+            <label class="check-row"><input type="checkbox" id="ingestForce" /> Force reprocess se checksum duplicato</label>
+            <button type="submit">Ingest</button>
+          </form>
+          <pre id="ingestResult" class="result"></pre>
+        </div>
+      </section>
+
+      <section id="panel-templates" class="panel">
+        <div class="card">
+          <div class="row-between">
+            <h2>Catalogo templates</h2>
+            <button id="refreshTemplatesBtn">Refresh</button>
+          </div>
+          <div id="templatesList" class="list"></div>
+          <h3>Dettaglio template</h3>
+          <pre id="templateDetail" class="result"></pre>
+        </div>
+      </section>
+
+      <section id="panel-trends" class="panel">
+        <div class="card">
+          <h2>Trend Explorer</h2>
+          <form id="trendForm" class="grid3">
+            <select id="trendTemplate" required>
+              <option value="">Seleziona template</option>
+            </select>
+            <select id="trendMetric" required>
+              <option value="">Seleziona metrica</option>
+            </select>
+            <input type="text" id="trendSheet" placeholder="Sheet (opzionale)" />
+            <input type="date" id="trendStart" />
+            <input type="date" id="trendEnd" />
+            <button type="submit">Calcola trend</button>
+          </form>
+
+          <div id="trendChartWrap" class="chart-wrap"></div>
+          <pre id="trendResult" class="result"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

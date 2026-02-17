@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Any
+import json
 
 import duckdb
 import pandas as pd
@@ -27,12 +28,14 @@ class DBRepository:
             """
             CREATE SEQUENCE IF NOT EXISTS seq_file_id START 1;
             CREATE SEQUENCE IF NOT EXISTS seq_operator_id START 1;
+            CREATE SEQUENCE IF NOT EXISTS seq_template_id START 1;
+            CREATE SEQUENCE IF NOT EXISTS seq_ingest_event_id START 1;
 
             CREATE TABLE IF NOT EXISTS ingest_file (
                 file_id BIGINT PRIMARY KEY,
                 filename VARCHAR NOT NULL,
                 checksum_sha256 VARCHAR(64) NOT NULL UNIQUE,
-                parser_version VARCHAR(20) NOT NULL,
+                parser_version VARCHAR(40) NOT NULL,
                 status VARCHAR(20) NOT NULL DEFAULT 'OK',
                 record_count BIGINT NOT NULL DEFAULT 0,
                 ingested_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -60,9 +63,46 @@ class DBRepository:
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
 
+            CREATE TABLE IF NOT EXISTS excel_template (
+                template_id BIGINT PRIMARY KEY,
+                template_name VARCHAR NOT NULL,
+                template_version INTEGER NOT NULL,
+                workbook_signature VARCHAR(64) NOT NULL UNIQUE,
+                schema_json TEXT NOT NULL,
+                status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(template_name, template_version)
+            );
+
+            CREATE TABLE IF NOT EXISTS excel_row_fact (
+                file_id BIGINT NOT NULL,
+                template_id BIGINT NOT NULL,
+                sheet_name VARCHAR NOT NULL,
+                row_number BIGINT NOT NULL,
+                event_date DATE,
+                metrics_json TEXT,
+                dimensions_json TEXT,
+                raw_json TEXT,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS excel_ingest_event (
+                event_id BIGINT PRIMARY KEY,
+                file_id BIGINT NOT NULL,
+                template_id BIGINT NOT NULL,
+                status VARCHAR(20) NOT NULL,
+                row_count BIGINT NOT NULL DEFAULT 0,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                notes TEXT
+            );
+
             CREATE INDEX IF NOT EXISTS idx_flow_period ON mnp_flow_fact(period_type, period_date);
             CREATE INDEX IF NOT EXISTS idx_flow_donor ON mnp_flow_fact(donor_operator_id, period_date);
             CREATE INDEX IF NOT EXISTS idx_flow_recipient ON mnp_flow_fact(recipient_operator_id, period_date);
+
+            CREATE INDEX IF NOT EXISTS idx_excel_row_template_date ON excel_row_fact(template_id, event_date);
+            CREATE INDEX IF NOT EXISTS idx_excel_row_sheet ON excel_row_fact(sheet_name);
+            CREATE INDEX IF NOT EXISTS idx_excel_ingest_template ON excel_ingest_event(template_id, created_at);
 
             CREATE OR REPLACE VIEW v_operator_period AS
             WITH in_flow AS (
@@ -90,6 +130,9 @@ class DBRepository:
             """
         )
 
+    def next_id(self, sequence_name: str) -> int:
+        return int(self.con.execute(f"SELECT nextval('{sequence_name}')").fetchone()[0])
+
     def file_exists(self, checksum: str) -> bool:
         row = self.con.execute(
             "SELECT 1 FROM ingest_file WHERE checksum_sha256 = ? LIMIT 1", [checksum]
@@ -103,9 +146,6 @@ class DBRepository:
         if not row:
             return None
         return int(row[0])
-
-    def next_id(self, sequence_name: str) -> int:
-        return self.con.execute(f"SELECT nextval('{sequence_name}')").fetchone()[0]
 
     def insert_ingest_file(self, filename: str, checksum: str, parser_version: str) -> int:
         file_id = self.next_id("seq_file_id")
@@ -144,12 +184,21 @@ class DBRepository:
     def delete_flows_for_file_id(self, file_id: int) -> None:
         self.con.execute("DELETE FROM mnp_flow_fact WHERE file_id = ?", [file_id])
 
-    def delete_file_and_flows_by_checksum(self, checksum: str) -> None:
+    def delete_generic_rows_for_file_id(self, file_id: int) -> None:
+        self.con.execute("DELETE FROM excel_row_fact WHERE file_id = ?", [file_id])
+        self.con.execute("DELETE FROM excel_ingest_event WHERE file_id = ?", [file_id])
+
+    def delete_file_everywhere_by_checksum(self, checksum: str) -> None:
         file_id = self.get_file_id_by_checksum(checksum)
         if file_id is None:
             return
         self.delete_flows_for_file_id(file_id)
+        self.delete_generic_rows_for_file_id(file_id)
         self.con.execute("DELETE FROM ingest_file WHERE file_id = ?", [file_id])
+
+    def delete_file_and_flows_by_checksum(self, checksum: str) -> None:
+        # backward-compatible alias
+        self.delete_file_everywhere_by_checksum(checksum)
 
     def insert_flow_dataframe(self, df: pd.DataFrame) -> int:
         if df.empty:
@@ -194,3 +243,210 @@ class DBRepository:
         if params is None:
             return self.con.execute(query).fetchdf()
         return self.con.execute(query, list(params)).fetchdf()
+
+    # ------------------------
+    # Template Engine methods
+    # ------------------------
+    def get_template_by_signature(self, signature: str) -> dict[str, Any] | None:
+        row = self.con.execute(
+            """
+            SELECT template_id, template_name, template_version, workbook_signature, schema_json, status, created_at
+            FROM excel_template
+            WHERE workbook_signature = ?
+            LIMIT 1
+            """,
+            [signature],
+        ).fetchone()
+        if not row:
+            return None
+        return {
+            "template_id": int(row[0]),
+            "template_name": row[1],
+            "template_version": int(row[2]),
+            "workbook_signature": row[3],
+            "schema": json.loads(row[4]),
+            "status": row[5],
+            "created_at": str(row[6]),
+        }
+
+    def get_template_by_id(self, template_id: int) -> dict[str, Any] | None:
+        row = self.con.execute(
+            """
+            SELECT template_id, template_name, template_version, workbook_signature, schema_json, status, created_at
+            FROM excel_template
+            WHERE template_id = ?
+            LIMIT 1
+            """,
+            [template_id],
+        ).fetchone()
+        if not row:
+            return None
+        return {
+            "template_id": int(row[0]),
+            "template_name": row[1],
+            "template_version": int(row[2]),
+            "workbook_signature": row[3],
+            "schema": json.loads(row[4]),
+            "status": row[5],
+            "created_at": str(row[6]),
+        }
+
+    def list_templates(self) -> list[dict[str, Any]]:
+        rows = self.con.execute(
+            """
+            SELECT template_id, template_name, template_version, workbook_signature, status, created_at
+            FROM excel_template
+            ORDER BY template_name, template_version DESC
+            """
+        ).fetchall()
+        result: list[dict[str, Any]] = []
+        for row in rows:
+            result.append(
+                {
+                    "template_id": int(row[0]),
+                    "template_name": row[1],
+                    "template_version": int(row[2]),
+                    "workbook_signature": row[3],
+                    "status": row[4],
+                    "created_at": str(row[5]),
+                }
+            )
+        return result
+
+    def _next_template_version(self, template_name: str) -> int:
+        row = self.con.execute(
+            "SELECT COALESCE(MAX(template_version), 0) FROM excel_template WHERE template_name = ?",
+            [template_name],
+        ).fetchone()
+        return int(row[0]) + 1
+
+    def create_template(self, template_name: str, signature: str, schema: dict[str, Any]) -> dict[str, Any]:
+        version = self._next_template_version(template_name)
+        template_id = self.next_id("seq_template_id")
+        self.con.execute(
+            """
+            INSERT INTO excel_template(template_id, template_name, template_version, workbook_signature, schema_json)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            [template_id, template_name, version, signature, json.dumps(schema, ensure_ascii=False)],
+        )
+        return self.get_template_by_id(template_id)  # type: ignore[return-value]
+
+    def create_or_reuse_template(
+        self,
+        signature: str,
+        schema: dict[str, Any],
+        template_name: str | None = None,
+    ) -> tuple[dict[str, Any], bool]:
+        existing = self.get_template_by_signature(signature)
+        if existing:
+            return existing, False
+
+        name = template_name.strip() if template_name else f"AUTO_{signature[:8]}"
+        created = self.create_template(name, signature, schema)
+        return created, True
+
+    def insert_generic_row_dataframe(self, df: pd.DataFrame) -> int:
+        if df.empty:
+            return 0
+
+        self.con.register("df_generic", df)
+        self.con.execute(
+            """
+            INSERT INTO excel_row_fact(
+                file_id,
+                template_id,
+                sheet_name,
+                row_number,
+                event_date,
+                metrics_json,
+                dimensions_json,
+                raw_json
+            )
+            SELECT
+                file_id,
+                template_id,
+                sheet_name,
+                row_number,
+                event_date,
+                metrics_json,
+                dimensions_json,
+                raw_json
+            FROM df_generic
+            """
+        )
+        self.con.unregister("df_generic")
+        return int(len(df))
+
+    def insert_excel_ingest_event(
+        self,
+        file_id: int,
+        template_id: int,
+        status: str,
+        row_count: int,
+        notes: str | None = None,
+    ) -> int:
+        event_id = self.next_id("seq_ingest_event_id")
+        self.con.execute(
+            """
+            INSERT INTO excel_ingest_event(event_id, file_id, template_id, status, row_count, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            [event_id, file_id, template_id, status, row_count, notes],
+        )
+        return event_id
+
+    def list_template_metrics(self, template_id: int) -> list[str]:
+        rows = self.con.execute(
+            "SELECT metrics_json FROM excel_row_fact WHERE template_id = ? LIMIT 1000",
+            [template_id],
+        ).fetchall()
+        metrics: set[str] = set()
+        for row in rows:
+            raw = row[0]
+            if not raw:
+                continue
+            try:
+                payload = json.loads(raw)
+            except Exception:
+                continue
+            for key in payload.keys():
+                metrics.add(str(key))
+        return sorted(metrics)
+
+    def query_template_trend(
+        self,
+        template_id: int,
+        metric_name: str,
+        sheet_name: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+    ) -> pd.DataFrame:
+        query = """
+        SELECT
+            event_date,
+            SUM(COALESCE(CAST(json_extract_string(metrics_json, ?) AS DOUBLE), 0)) AS metric_value,
+            COUNT(*) AS rows_included
+        FROM excel_row_fact
+        WHERE template_id = ?
+          AND event_date IS NOT NULL
+          AND (? IS NULL OR sheet_name = ?)
+          AND (? IS NULL OR event_date >= ?)
+          AND (? IS NULL OR event_date <= ?)
+        GROUP BY event_date
+        ORDER BY event_date
+        """
+        json_path = f"$.{metric_name}"
+        return self.query_df(
+            query,
+            [
+                json_path,
+                template_id,
+                sheet_name,
+                sheet_name,
+                start_date,
+                start_date,
+                end_date,
+                end_date,
+            ],
+        )

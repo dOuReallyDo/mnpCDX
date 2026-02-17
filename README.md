@@ -1,18 +1,19 @@
 # mnpCDX
 
-mnpCDX e una piattaforma MNP production-oriented che unifica ingestion, parsing, analytics, reporting, API e dashboard per scenari business reali.
+mnpCDX e una piattaforma production-oriented con interfaccia web moderna per ingestion e analisi trend di file Excel anche eterogenei.
 
 ## Stato
 - Versione target corrente: `v0.3.0-mvp`
 - Scope: weekly batch ingestion, KPI operator-focused, report markdown, API REST e dashboard operativa.
 
 ## Componenti principali
-- `src/mnp_cdx/ingest`: parser e servizio ingest idempotente.
+- `src/mnp_cdx/generic`: motore template-aware per Excel eterogenei (analisi struttura, versioning template, ingest append-only).
+- `src/mnp_cdx/ingest`: parser e servizio ingest MNP specifico.
 - `src/mnp_cdx/db`: schema e repository DuckDB.
 - `src/mnp_cdx/analytics`: KPI, trend e quality checks.
-- `src/mnp_cdx/api`: API FastAPI.
+- `src/mnp_cdx/api`: API FastAPI + Web UI SPA (`/`).
 - `src/mnp_cdx/cli.py`: comandi operativi.
-- `src/mnp_cdx/dashboard.py`: dashboard Streamlit.
+- `src/mnp_cdx/dashboard.py`: dashboard Streamlit (opzionale).
 
 ## Quick start
 ```bash
@@ -24,13 +25,23 @@ pip install -e .
 # Inizializza DB
 mnp-cdx init-db
 
+# Avvia Web UI moderna (API + frontend)
+mnp-cdx web --host 127.0.0.1 --port 8080
+# poi apri http://127.0.0.1:8080
+
+# Analisi struttura template da CLI
+mnp-cdx generic-analyze "/path/to/any_workbook.xlsx"
+
+# Ingestion template-aware (auto template o template_name)
+mnp-cdx generic-ingest "/path/to/any_workbook.xlsx" --template-name MY_TEMPLATE
+
 # Ingest file xlsx
 mnp-cdx ingest "/path/to/MNP MATRIX 20251127.xlsx"
 
 # KPI rapido
 mnp-cdx kpi --operator WINDTRE --period DAILY
 
-# Avvia API
+# Avvia API (solo backend)
 mnp-cdx api --host 0.0.0.0 --port 8080
 
 # Avvia dashboard
@@ -39,6 +50,7 @@ mnp-cdx dashboard
 
 ## API endpoint (MVP)
 - `GET /health`
+- `GET /` (Web UI moderna)
 - `POST /ingest`
 - `GET /operators`
 - `GET /kpi/{operator}`
@@ -46,6 +58,12 @@ mnp-cdx dashboard
 - `GET /top-donors/{operator}`
 - `GET /top-recipients/{operator}`
 - `GET /quality-report`
+- `POST /template/analyze`
+- `POST /template/ingest`
+- `GET /templates`
+- `GET /template/{template_id}`
+- `GET /template/{template_id}/metrics`
+- `GET /template/{template_id}/trend`
 
 ## Versioning progressivo
 - `v0.1.0`: foundation ingest + schema + parser.

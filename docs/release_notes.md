@@ -1,5 +1,14 @@
 # Release Notes mnpCDX
 
+## v0.4.0 - Web Studio + Template Engine
+- Nuova Web UI moderna su `GET /` per operare senza CLI.
+- Motore template-aware per Excel eterogenei:
+  - analisi struttura workbook/sheet/colonne;
+  - firma strutturale e matching template;
+  - versioning template evolutivo;
+  - ingestion append-only in `excel_row_fact`.
+- Trend explorer generico per metrica/template via API e UI.
+
 ## v0.1.0 - Foundation
 - Setup package Python e CLI.
 - Schema DuckDB iniziale con tabelle ingest + fact flows.
