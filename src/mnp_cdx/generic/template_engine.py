@@ -42,6 +42,8 @@ class GenericIngestResult:
 
 
 class GenericTemplateEngine:
+    SUPPORTED_EXTENSIONS = {".xlsx", ".xlsm"}
+
     def __init__(self, repo: DBRepository) -> None:
         self.repo = repo
 
@@ -64,9 +66,21 @@ class GenericTemplateEngine:
         except ValueError:
             return None
 
+    def _validate_workbook_path(self, file_path: Path) -> None:
+        ext = file_path.suffix.lower()
+        if ext not in self.SUPPORTED_EXTENSIONS:
+            raise ValueError(
+                f"Formato non supportato: '{ext}'. "
+                "Usa .xlsx o .xlsm (per .xls: converti prima il file in .xlsx)."
+            )
+
     def analyze(self, file_path: str | Path) -> AnalyzeResult:
         file_path = Path(file_path)
-        wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
+        self._validate_workbook_path(file_path)
+        try:
+            wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
+        except Exception as exc:
+            raise ValueError(f"Impossibile leggere workbook Excel: {exc}") from exc
 
         schema: dict[str, Any] = {
             "engine_version": "generic-template-1.0",
@@ -318,6 +332,7 @@ class GenericTemplateEngine:
         force: bool = False,
     ) -> GenericIngestResult:
         file_path = Path(file_path)
+        self._validate_workbook_path(file_path)
         checksum = self.checksum(file_path)
 
         if self.repo.file_exists(checksum):

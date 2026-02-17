@@ -148,6 +148,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "matched_template": analyzed.matched_template,
                 "schema": analyzed.schema,
             }
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         finally:
             tmp_path.unlink(missing_ok=True)
 
