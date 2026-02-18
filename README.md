@@ -3,8 +3,8 @@
 mnpCDX e una piattaforma production-oriented con interfaccia web moderna per ingestion e analisi trend di file Excel anche eterogenei.
 
 ## Stato
-- Versione target corrente: `v0.4.2`
-- Scope: weekly batch ingestion, KPI operator-focused, report markdown, API REST e dashboard operativa.
+- Versione target corrente: `v0.5.0`
+- Scope: decision intelligence platform con ingestion affidabile, analytics, simulation e governance fino a `v1.0.0-mvp`.
 
 ## Componenti principali
 - `src/mnp_cdx/generic`: motore template-aware per Excel eterogenei (analisi struttura, versioning template, ingest append-only).
@@ -71,8 +71,23 @@ mnp-cdx dashboard
 - `v0.2.0`: analytics + API + reporting.
 - `v0.3.0-mvp`: dashboard + AI summary opzionale + quality gate report.
 - `v0.4.x`: web studio template-aware + hardening error handling API/UI.
+- `v0.5.0`: portfolio convergence baseline e piano multi-agent fino a MVP.
+- `v0.6.0`: data reliability core.
+- `v0.7.0`: analytics + simulation core.
+- `v0.8.0`: operations + security hardening.
+- `v0.9.0-rc1`: pilot readiness candidate.
+- `v1.0.0-mvp`: first business MVP.
 
 Dettagli in `docs/release_notes.md`.
+
+## Documenti chiave programma Next
+- `project_overview.md`
+- `mnpCDX_nextgen_project.md`
+- `mnpCDX_detailed_spec.md`
+- `mnpCDX_development_plan_critical_review.md`
+- `agents_team_blueprint.md`
+- `docs/agent_backlog.yaml`
+- `docs/agent_team_manifest.yaml`
 
 ## Governance operativa portfolio
 - Modello token/context minimal: `docs/token_minimal_operating_model.md`

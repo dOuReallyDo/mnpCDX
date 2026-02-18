@@ -1,32 +1,70 @@
-program: mnpCDX MVP delivery
+program: mnpCDX Next MVP delivery
 coordinator: Main Architect
 milestones:
-  - version: v0.1.0
-    objective: Foundation ingestion and schema
+  - version: v0.5.0
+    objective: Portfolio convergence baseline
     tasks:
-      - owner: Ingestion Engineer
-        item: Build idempotent upload pipeline
-      - owner: Parsing Specialist
-        item: Stabilize monthly/daily parser and add regression checks
-      - owner: Data Model Engineer
-        item: Define DuckDB schema and analytical view
-  - version: v0.2.0
-    objective: Analytics and API
+      - owner: Main Architect
+        item: Freeze target architecture, release gates and decision log rules
+      - owner: Product Strategy Agent
+        item: Define measurable business outcomes and MVP acceptance KPIs
+      - owner: Release Manager Agent
+        item: Enforce semantic versioning policy and release template
+
+  - version: v0.6.0
+    objective: Data reliability core
     tasks:
-      - owner: Analytics Engineer
-        item: Implement KPI and quality report services
-      - owner: API Engineer
-        item: Expose REST endpoints and OpenAPI
-      - owner: QA Lead
-        item: Build integration tests for ingest->kpi flow
-  - version: v0.3.0-mvp
-    objective: Business-ready MVP
+      - owner: Ingestion Agent
+        item: Harden idempotent ingestion with checksum and replay controls
+      - owner: Parser Reliability Agent
+        item: Add template contracts and parser regression harness
+      - owner: Data Platform Agent
+        item: Implement lineage and quality event persistence
+      - owner: QA Agent
+        item: Build integration tests ingest to quality-report
+
+  - version: v0.7.0
+    objective: Analytics and simulation core
     tasks:
-      - owner: Dashboard Engineer
-        item: Build operator dashboard with trends and top flows
-      - owner: AI Orchestrator Engineer
-        item: Add safe AI executive summary fallback-first
-      - owner: Security Engineer
-        item: Apply secret-handling baseline and checks
-      - owner: DevOps/SRE Engineer
-        item: Prepare release workflow and runbook
+      - owner: Analytics Agent
+        item: Stabilize KPI and anomaly services with deterministic baselines
+      - owner: Simulation Agent
+        item: Deliver scenario what-if engine with traceable assumptions
+      - owner: API Agent
+        item: Version and expose analytics/simulation contracts
+      - owner: QA Agent
+        item: Add contract tests and non-regression suites
+
+  - version: v0.8.0
+    objective: Operations and security hardening
+    tasks:
+      - owner: Security Agent
+        item: Implement RBAC baseline and secret governance checks
+      - owner: SRE/DevOps Agent
+        item: Add monitoring, alerting and runbook automation
+      - owner: API Agent
+        item: Add structured error taxonomy and correlation IDs
+      - owner: Release Manager Agent
+        item: Validate rollback procedure and operational readiness checklist
+
+  - version: v0.9.0-rc1
+    objective: Pilot readiness candidate
+    tasks:
+      - owner: Frontend Ops Agent
+        item: Complete executive and operational dashboard flows
+      - owner: AI Governance Agent
+        item: Enable evidence-first AI summaries with confidence scoring
+      - owner: QA Agent
+        item: Run full UAT and release candidate verification
+      - owner: Main Architect
+        item: Execute stop/go decision for MVP cut
+
+  - version: v1.0.0-mvp
+    objective: First business MVP
+    tasks:
+      - owner: Main Architect
+        item: Approve production pilot handover package
+      - owner: SRE/DevOps Agent
+        item: Complete deployment and observability handoff
+      - owner: Release Manager Agent
+        item: Publish final MVP release notes and signed tag

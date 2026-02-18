@@ -1,5 +1,8 @@
 # `mnpCDX` Spec Dettagliata, Piano di Sviluppo e Revisione Critica
 
+> Nota: questo documento resta come baseline storica. La versione corrente del programma e in:
+> `mnpCDX_detailed_spec.md` e `mnpCDX_development_plan_critical_review.md`.
+
 ## 1. Obiettivo di prodotto
 Realizzare una piattaforma enterprise per ingestion, normalizzazione, analisi e reporting MNP, capace di produrre insight affidabili e tracciabili per decisioni business settimanali e mensili.
 

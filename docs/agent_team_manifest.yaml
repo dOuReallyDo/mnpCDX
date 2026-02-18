@@ -1,0 +1,69 @@
+program: mnpCDX Next
+main_architect: Main Architect
+status: ACTIVE
+agents:
+  - name: Product Strategy Agent
+    domain: Business outcomes and scope prioritization
+    primary_outputs:
+      - mvp_outcome_scorecard
+      - scope_decision_memos
+  - name: Ingestion Agent
+    domain: Batch/API ingestion, idempotency, replay controls
+    primary_outputs:
+      - ingestion_service_updates
+      - ingest_reliability_report
+  - name: Parser Reliability Agent
+    domain: Template contracts and parser regression
+    primary_outputs:
+      - parser_contract_suite
+      - regression_baselines
+  - name: Data Platform Agent
+    domain: Canonical model, lineage, quality persistence
+    primary_outputs:
+      - schema_migrations
+      - lineage_quality_views
+  - name: Analytics Agent
+    domain: KPI and anomaly engines
+    primary_outputs:
+      - kpi_services
+      - analytics_validation_report
+  - name: Simulation Agent
+    domain: Scenario what-if engine
+    primary_outputs:
+      - simulation_core
+      - assumptions_trace_report
+  - name: API Agent
+    domain: Contract-first API and versioning
+    primary_outputs:
+      - openapi_contracts
+      - api_compatibility_matrix
+  - name: Frontend Ops Agent
+    domain: Executive and operational dashboard UX
+    primary_outputs:
+      - dashboard_releases
+      - ux_acceptance_checklist
+  - name: AI Governance Agent
+    domain: Evidence-first AI summaries and guardrails
+    primary_outputs:
+      - ai_policy_pack
+      - confidence_coverage_metrics
+  - name: QA Agent
+    domain: Test strategy and release validation
+    primary_outputs:
+      - test_suites
+      - release_quality_reports
+  - name: Security Agent
+    domain: Security baseline, RBAC, secret governance
+    primary_outputs:
+      - security_controls
+      - vulnerability_status_report
+  - name: SRE/DevOps Agent
+    domain: CI/CD, monitoring, runbook
+    primary_outputs:
+      - deployment_pipeline
+      - ops_runbook
+  - name: Release Manager Agent
+    domain: Semver governance and release lifecycle
+    primary_outputs:
+      - release_notes
+      - signed_tags

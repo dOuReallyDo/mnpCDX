@@ -1,5 +1,14 @@
 # Release Notes mnpCDX
 
+## v0.5.0 - Portfolio Convergence Baseline (2026-02-18)
+- Aggiornata analisi critica portfolio in `project_overview.md` su sottocartelle attive.
+- Definito super-progetto `mnpCDX Next` in `mnpCDX_nextgen_project.md`.
+- Aggiunta spec tecnica dettagliata in `mnpCDX_detailed_spec.md`.
+- Aggiunto piano sviluppo + revisione critica in `mnpCDX_development_plan_critical_review.md`.
+- Aggiornato blueprint team multi-agent e backlog milestone fino a `v1.0.0-mvp`.
+- Introdotto manifesto team machine-readable in `docs/agent_team_manifest.yaml`.
+- Potenziato modulo `main_architect` per sintesi/validazione backlog+team.
+
 ## v0.4.2 - API Error Hardening
 - Hardening endpoint `/template/analyze` e `/template/ingest` con gestione eccezioni inattese e reference id.
 - Migliorato parser errori nella Web UI (`static/app.js`) per messaggi utente leggibili.

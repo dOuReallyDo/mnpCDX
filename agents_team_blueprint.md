@@ -1,54 +1,53 @@
-# Team Multi-Agent `mnpCDX` (coordinato da Main Architect)
+# Team Multi-Agent mnpCDX Next (coordinato da Main Architect)
 
-## Governance
-- **Main Architect (Lead Agent)**: ownership di architettura, priorità, decision log, gate di rilascio.
-- Tutti gli agenti lavorano su backlog condiviso con Definition of Done unificata.
-- Nessuna feature può entrare in release senza validazione QA + Security check minimo.
+## Governance principale
+- **Main Architect (Program Lead)**
+  - owner di architettura, scope, decisioni tecniche, release gates.
+  - unica autorita per stop/go milestone.
 
-## Team completo
+## Team completo di agenti
 
-| Agente | Responsabilità primaria | Deliverable |
+| Agente | Missione | KPI di responsabilita |
 |---|---|---|
-| Main Architect | Disegno target architecture, slicing release, risk governance | ADR, release gates, roadmap aggiornata |
-| Ingestion Engineer | Pipeline upload, dedup, metadata, replay | modulo ingestion + test integrazione |
-| Parsing Specialist | Robustezza estrazione monthly/daily, merged/header logic | parser engine + regression fixtures |
-| Data Model Engineer | Schema DB, viste analytics, lineage | migration/schema + query contracts |
-| Analytics Engineer | KPI, anomaly signals, quality score | analytics service + metric tests |
-| API Engineer | FastAPI, DTO, error handling, contract stability | endpoint REST + OpenAPI |
-| Dashboard Engineer | UI Streamlit/BI-ready views | dashboard MVP + usability checklist |
-| AI Orchestrator Engineer | provider adapters, prompt policy, evidence-first summaries | ai service + guardrail tests |
-| QA Lead | test strategy, regression gates, release readiness | test plan + test reports |
-| Security Engineer | secrets handling, data protection, threat review | security baseline + remediation log |
-| DevOps/SRE Engineer | packaging, CI/CD, observability, release automation | pipeline CI + runbook |
+| Main Architect | Orchestrazione programma e decision log | milestone on-time, risk burn-down |
+| Product Strategy Agent | allineamento obiettivi business/tech | outcome adoption, scope clarity |
+| Ingestion Agent | pipeline input, dedup, replay | ingest success rate, latency ingest |
+| Parser Reliability Agent | robustezza parser/template contracts | parser regression pass rate |
+| Data Platform Agent | schema, lineage, data quality store | query p95, data confidence score |
+| Analytics Agent | KPI/trend/anomaly engine | KPI correctness, query accuracy |
+| Simulation Agent | motore what-if economico/operativo | scenario consistency, explainability |
+| API Agent | API contract-first, versioning endpoint | contract stability, error rate |
+| Frontend Ops Agent | dashboard executive+operativa | task completion UX, load p95 |
+| AI Governance Agent | copilot evidence-first + guardrail | hallucination rate, citation coverage |
+| QA Agent | test architecture, release validation | pass rate, escaped defects |
+| Security Agent | RBAC, secrets, hardening, audit | vulnerabilities open, policy compliance |
+| SRE/DevOps Agent | CI/CD, monitoring, runbook | MTTR, deploy success rate |
+| Release Manager Agent | semver, notes, tag policy | release quality, rollback readiness |
 
-## Modello di coordinamento
+## Modalita di coordinamento
+- Sprint tecnici settimanali con review Main Architect.
+- Checkpoint rischio/qualita ogni 2 settimane.
+- DoD obbligatoria per ogni task:
+  - codice/documentazione aggiornati;
+  - test e evidenze;
+  - rollback note;
+  - impatto security dichiarato.
 
-### Cadence
-- Daily sync asincrono (stato, blocker, rischi).
-- Release review a fine milestone (`v0.1.0`, `v0.2.0`, `v0.3.0-mvp`).
+## Quality gates obbligatori
+1. Parser Gate: regression suite verde.
+2. Data Gate: quality score sopra soglia definita.
+3. API Gate: contract tests e backward compatibility.
+4. Security Gate: zero secret leak + baseline scan.
+5. Ops Gate: monitoring e runbook aggiornati.
+6. Release Gate: changelog/version tag + smoke check finale.
 
-### Artefatti obbligatori per ogni task
-- scope tecnico;
-- test evidence;
-- risk note;
-- rollback note.
+## Sequenza release fino al primo MVP
+- `v0.5.0` Portfolio Convergence Baseline
+- `v0.6.0` Data Reliability Core
+- `v0.7.0` Analytics + Simulation Core
+- `v0.8.0` Operations & Security Hardening
+- `v0.9.0-rc1` Pilot Readiness Candidate
+- `v1.0.0-mvp` First Business MVP
 
-### Quality gates
-1. `Parser Gate`: regression suite pass + no silent parsing errors.
-2. `Data Gate`: KPI consistency checks pass.
-3. `API Gate`: contract tests pass.
-4. `Security Gate`: nessun secret in repo + baseline scan pass.
-5. `Release Gate`: changelog/version tag + smoke test report.
-
-## Sequenza operativa fino al primo MVP
-1. **Foundation Sprint** (`v0.1.0`)
-- Ingestion Engineer + Parsing Specialist + Data Model Engineer.
-2. **Analytics/API Sprint** (`v0.2.0`)
-- Analytics Engineer + API Engineer + QA Lead.
-3. **Business MVP Sprint** (`v0.3.0-mvp`)
-- Dashboard Engineer + AI Engineer + Security + DevOps + QA.
-
-## Decision rule del Main Architect
-- Favorire affidabilità e tracciabilità su velocità quando in conflitto.
-- Consentire scope cut solo se non riduce correctness dei KPI.
-- Bloccare release se quality gate incompleti.
+## Regola operativa del Main Architect
+Se un gate critico fallisce, la release non avanza: si apre remediation track con priorita assoluta.
